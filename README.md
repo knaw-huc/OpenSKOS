@@ -1,16 +1,6 @@
 [![Build Status](https://travis-ci.org/picturae/OpenSKOS.svg)](https://travis-ci.org/picturae/OpenSKOS)
 
 # 1. Install the OpenSKOS code
-
-***
-
-> ___Docker development___
->
-> Docker images were added to the OpenSkos project in 2017. If you wish to develop using docker, please proceed to 
-section 8
-
-***
-
 Copy the code to a location of your choice.
 
 Make sure all files are readable by your webserver. Make sure the directories
@@ -94,6 +84,7 @@ In this way the ini supports collection ordering for more than 1 instances.
 You can install your favourite webserver with PHP support.
 All development and testing was done using Apache/2.2.15 with PHP 5.3.8
 Make sure your PHP installation supports at least one supported Database
+
 adapters (see http://framework.zend.com/manual/en/zend.db.adapter.html or otherwise: https://docs.zendframework.com/zend-db/adapter/)
 
 ## 2.1 Setting Up Your VHOST
@@ -136,6 +127,7 @@ where you can manage all the other entities of the application.
 
 
 # 4. Apache Jena Fuseki setup
+
 Openskos is compatible with Fuseki 2 or Fuzeki 3 for storage. It has been tested up to Fuzeki 3.8 (the latest stable version at time of writing)
 
 Installing Fuseki 2 for development purposes:
@@ -150,7 +142,6 @@ Installing Fuseki 2 for development purposes:
 `./fuseki-server --update`
   1. The docs say that Fuseki requires Java 7, but if you have the error `Unsupported major.minor version 52.0` try updating your Java, or go for Java 8 directly.
 5. Now you will have the fuseki server up and running on [http://localhost:3030/](http://localhost:3030/) with "openskos" dataset defined. This is also the default config in openskos' `application.ini.dist` - item `sparql`
-
 
 ## 4.1 Jena Updates
 Several bug fixes were made to the rules/openskos.ttl file in October 2018, on both the OpenSkos 2.2 (Master at time of
@@ -244,6 +235,7 @@ npm run doc
 ```
 Visit: http://example.com/apidoc/
 
+
 ## 6.6. Using the API
 Full HTML documentation of the API is supplied and is available in HTML at `<baseruri>/apidoc`
 
@@ -310,12 +302,10 @@ php skos2openskos.php --setUri=http://htdl/clavas-org/set
 
 ### TL;DR;
 ```sh
-composer install [--ignore-platform-reqs]
-php vendor/bin/phing config
 
 docker network create openskos
 docker-compose up 
-
+docker exec openskos-php-fpm /bin/sh /init-openskos.sh
 # go to localhost:9001 and create a dataset matching in name with application.ini sparql.queryUri if it's missing
 
 sudo chmod 777 data/solr
@@ -334,49 +324,12 @@ To test / develop the application go to the root folder, and run:
 
 ```sh
 docker-compose up
-composer install
+docker exec -it openskos-php-fpm composer install
 docker exec -it openskos-php-fpm ./vendor/bin/phing install.dev
 ```
 
-
-## 8.2 Updating the configuration
-
-Then copy the file `./application/configs/application.ini.dist` to `./application/configs/application.ini`  
-
-Under the section `; Solr configuration:` add the following:
-```
-solr.host=openskos-solr
-solr.port=8983
-solr.context=/solr/openskos
-
-```
-
-Under the section '; Apache Jena Fuseki configuration:' add the following
-```
-sparql.queryUri=http://openskos-jena-fuseki:3030/openskos/query
-sparql.updateUri=http://openskos-jena-fuseki:3030/openskos/update
-```
-
->**Configuring Jena**
->
->You can then create an empty graph with the name _openskos_ in the Jena interface at http://localhost:9001. 
-The admin username:password combination is `admin` and `admin`.
-Here you can create a **persistent** dataset named `openskos`
-
-Under the section `; Database configuration:` add the following
-
-```
-resources.db.adapter=pdo_mysql
-resources.db.params.host=openskos-mysql
-resources.db.params.username=root
-resources.db.params.password=secr3t
-resources.db.params.charset=utf8
-resources.db.params.dbname=openskos
-resources.db.isDefaultTableAdapter = true
-```
-
-## 8.3 Running OpenSkos
-
+Go to `http://localhost:9001/manage.html?tab=datasets` login with admin / admin
+create a persistent dataset named `openskos`
 Create a test tenant / user in the openskos application
 
 ```
